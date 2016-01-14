@@ -35,11 +35,11 @@ class Human < Player
   end
 
   def choose
-    question = 'Please choose rock, paper, or scissors:'
+    question = "Plase choose #{Move::VALUES.join(' ')}"
     validation_msg = 'Sorry, invalid choice'
 
     choice = ask(question, validation_msg) do |answer|
-               %w(rock paper scissors).include?(answer)
+               Move::VALUES.include?(answer)
              end
 
     self.move = Move.new(choice)
@@ -57,7 +57,7 @@ class Computer < Player
 end
 
 class Move
-  VALUES = %w(rock paper scissors)
+  VALUES = %w(rock paper scissors lizard spock)
 
   attr_reader :value
 
@@ -77,10 +77,28 @@ class Move
     @value == 'scissors'
   end
 
+  def lizard?
+    value == 'lizard'
+  end
+
+  def spock?
+    value == 'spock'
+  end
+
   def >(other_move)
-    (rock? && other_move.scissors?) ||
-      (paper? && other_move.rock?) ||
-      (scissors? && other_move.paper?)
+    (rock? && (other_move.scissors? || other_move.lizard?)) ||
+      (scissors? && (other_move.paper? || other_move.lizard?)) ||
+      (paper? && (other_move.rock? || other_move.spock?)) ||
+      (spock? && (other_move.rock? || other_move.scissors?)) ||
+      (lizard? && (other_move.paper? || other_move.spock?))
+  end
+
+  def <(other_move)
+    (rock? && (other_move.paper? || other_move.spock?)) ||
+      (scissors? && (other_move.rock? || other_move.spock?)) ||
+      (paper? && (other_move.scissors? || other_move.lizard?)) ||
+      (spock? && (other_move.paper? || other_move.lizard?)) ||
+      (lizard? && (other_move.scissors? || other_move.rock?))
   end
 
   def ==(other_move)
@@ -112,8 +130,10 @@ class RPSGame
   end
 
   def detect_winner
-    if human.move != computer.move
-      (human.move > computer.move) ? :player : :computer
+    if human.move < computer.move
+      :computer
+    elsif human.move > computer.move
+      :player
     end
   end
 
