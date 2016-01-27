@@ -4,6 +4,8 @@ require_relative 'square'
 require_relative 'player'
 
 class TTTgame
+  HUMAN_PLAYERS = 1
+  COMPUTER_PLAYERS = 1
   attr_accessor :players, :winner
   attr_reader :board
 
@@ -28,21 +30,17 @@ class TTTgame
 
   private
 
-  def ask_player_amount(type_of_player)
-    puts "How many #{type_of_player} players?"
-    gets.chomp.to_i
-  end
-
-  def add_players(type)
-    amount = ask_player_amount(type)
+  def add_players(type = :human)
+    amount = (type == :human ? HUMAN_PLAYERS : COMPUTER_PLAYERS)
+    
     amount.times do
-      players << (type == 'Human' ? Human : Computer).new
+      players << (type == :human ? Human : Computer).new
     end
   end
 
   def setup_players
-    add_players('Human')
-    add_players('Computer')
+    add_players
+    add_players(:computer)
   end
 
   def init_game
