@@ -4,8 +4,8 @@ require_relative 'square'
 require_relative 'player'
 
 class TTTgame
-  HUMAN_PLAYERS = 1
-  COMPUTER_PLAYERS = 1
+  HUMAN_PLAYERS = 2
+  COMPUTER_PLAYERS = 0
   attr_accessor :players, :winner
   attr_reader :board
 
@@ -47,14 +47,13 @@ class TTTgame
     clear_screen
     display_welcome_message
     setup_players
-    display_board
   end
 
   def play
     players.cycle do |player|
+      display_board
       player.move(board)
       self.winner = player if board.winner?
-      display_board
       break if game_over?
     end
   end
@@ -101,7 +100,8 @@ class TTTgame
   def display_board
     clear_screen
     players.each { |player| print "#{player.name} is a #{player.marker}. " }
-    puts "\n\n#{board}\n\n"
+    puts "\nYou need #{Board::SQUARES_TO_WIN} squares in a row to win."
+    puts "\n#{board}\n\n"
   end
 end
 
