@@ -9,15 +9,23 @@ class Player
 end
 
 class Human < Player
-  @@players = 0
-
+  @players = 0
+  
+  def Human.players
+    @players
+  end
+  
+  def Human.add_to_player_count
+    @players += 1
+  end
+  
   def initialize
     super()
-    @@players += 1
+    Human.add_to_player_count
   end
 
   def set_name
-    msg = if @@players > 0
+    msg = if Human.players > 0
             "next player's name?"
           else
             "What's your name?"

@@ -68,6 +68,7 @@ class TTTgame
     loop do
       answer = gets.chomp
       break(answer == 'y') if ['y', 'n'].include? answer
+      puts "That's not a valid option."
     end
   end
 

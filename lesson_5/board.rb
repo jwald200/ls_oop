@@ -9,7 +9,7 @@ class Board
   end
 
   def reset
-    (1..BOARD_SIZE * BOARD_SIZE).each do |index|
+    (1..BOARD_SIZE**2).each do |index|
       squares[index] = Square.new(index.to_s.light_black)
     end
   end
@@ -142,7 +142,7 @@ class Board
       return true if end_of_row?(index + 1)
       index += 1
     end
-      false
+    false
   end
   
   def beginning_squares?(index)
