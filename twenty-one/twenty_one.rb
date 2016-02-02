@@ -83,11 +83,11 @@ class Participant
   end
 
   def busted?
-    total > 21
+    total > TwentyOne::VALUES_TO_WIN
   end
 
   def won_or_busted?
-    total >= 21
+    total >= TwentyOne::VALUES_TO_WIN
   end
 
   def show_hand
@@ -109,7 +109,7 @@ class Participant
 
   def adjust_aces(total)
     cards.each do |card|
-      break if total <= 21
+      break if total <= TwentyOne::VALUES_TO_WIN
       card.ace? ? total -= 10 : next
     end
     total
@@ -132,7 +132,7 @@ class Player < Participant
   end
 
   def turn_over?
-    stay? || total >= 21
+    stay? || total >= TwentyOne::VALUES_TO_WIN
   end
 
   def reset
@@ -178,7 +178,7 @@ class Dealer < Participant
   end
 
   def turn_over?
-    total >= 17
+    total >= TwentyOne::DEALER_MINIMUM
   end
 
   def reset
