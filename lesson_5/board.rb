@@ -1,6 +1,6 @@
 class Board
-  BOARD_SIZE = 3
-  SQUARES_TO_WIN = 3
+  BOARD_SIZE = 6
+  SQUARES_TO_WIN = 4
   attr_reader :squares
 
   def initialize
@@ -9,7 +9,7 @@ class Board
   end
 
   def reset
-    (1..BOARD_SIZE * BOARD_SIZE).each do |index|
+    (1..BOARD_SIZE**2).each do |index|
       squares[index] = Square.new(index.to_s.light_black)
     end
   end
@@ -46,51 +46,46 @@ class Board
 
   # outcome helpers
 
-  def rows
-    squares.keys.each_slice(BOARD_SIZE).to_a
-  end
-
-  def columns
-    rows.transpose
-  end
-
-  def diagonals
-    diagonals = []
-    counter   = 0
-    while diagonals.size < BOARD_SIZE * 2
-      diagonals << squares.keys[counter]
-
-      if diagonals.size >= BOARD_SIZE
-        counter -= (BOARD_SIZE - 1)
-      else
-        counter += BOARD_SIZE.next
-      end
+  def next_square_index(type)
+    case type
+    when :rows then 1
+    when :columns then BOARD_SIZE
+    when :reverse_diagonal then BOARD_SIZE - 1
+    else BOARD_SIZE + 1
     end
-    diagonals.each_slice(BOARD_SIZE).to_a
+  end
+  
+  def skip_square?(square_index, type)
+    case type
+    when :columns then false
+    when :reverse_diagonal then beginning_squares?(square_index)
+    else  ending_squares?(square_index)
+    end
+  end
+  
+  def get_line(square_index, type)
+    line = []
+    SQUARES_TO_WIN.times do
+      line << squares.keys[square_index]
+      square_index += next_square_index(type)
+    end
+    line.compact
   end
 
-  def lines
-    rows +
-    columns +
-    diagonals
+  def get_winning_line(type)
+    squares.size.times do |square_index|
+      next if skip_square?(square_index, type)
+      line = get_line(square_index, type)
+      return line if line.size == SQUARES_TO_WIN && all_same_marker?(line)
+    end
+    nil
   end
 
   def winning_line
-    lines.each do |line|
-      win_line = find_winning_line(line)
-
-      return win_line if win_line
-    end
-    nil
-  end
-
-  def find_winning_line(line)
-    line.size.times do |index|
-      win_line = line[index, SQUARES_TO_WIN]
-      next if win_line.size < 3
-      return win_line if all_squares_have_same_marker?(win_line)
-    end
-    nil
+    get_winning_line(:rows)      ||
+    get_winning_line(:columns)   ||
+    get_winning_line(:diagonals) ||
+    get_winning_line(:reverse_diagonal)
   end
 
   def all_marked?(square_line)
@@ -101,7 +96,7 @@ class Board
     square_line.map(&:marker).uniq.one?
   end
 
-  def all_squares_have_same_marker?(line)
+  def all_same_marker?(line)
     square_line = squares.values_at(*line)
     all_marked?(square_line) && all_same?(square_line)
   end
@@ -141,4 +136,21 @@ class Board
   def beginning_of_row?(index)
     end_of_row?(index + (BOARD_SIZE - 1))
   end
+  
+  def ending_squares?(index)
+    (SQUARES_TO_WIN - 1).times do
+      return true if end_of_row?(index + 1)
+      index += 1
+    end
+    false
+  end
+  
+  def beginning_squares?(index)
+    (SQUARES_TO_WIN - 1).times do
+      return true if beginning_of_row?(index + 1)
+      index -= 1
+    end
+    false
+  end
+  
 end
