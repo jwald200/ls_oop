@@ -17,8 +17,6 @@ class Deck
   private
 
   def init_cards
-    [].tap do |cards|
-      CARD_AMOUNT.times { cards << Card.new }
-    end.shuffle
+    (1..CARD_AMOUNT).map { Card.new }.shuffle
   end
 end

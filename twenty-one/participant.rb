@@ -1,6 +1,6 @@
 class Participant
   include Displayable
-
+  include Questionable
   attr_accessor :cards, :name
 
   def initialize
@@ -86,17 +86,17 @@ class Player < Participant
   private
 
   def set_name
-    self.name = CLquestion.ask("What's your name?") do |q|
-                  q.error_msg = "Sorry, must enter a value."
-                  q.string = true
-                end
+    self.name = ask("What's your name?",
+                  error_msg: "Sorry, must enter a value.",
+                  string: true
+                )
   end
 
   def hit?
-    CLquestion.ask("Would you like to (h)it or (s)tay?") do |q|
-      q.error_msg = "Sorry, must enter 'h' or 's'."
-      q.options = %w(h s)
-    end == 'h'
+    ask("Would you like to (h)it or (s)tay?",
+      error_msg: "Sorry, must enter 'h' or 's'.",
+      options: %w(h s)
+    ) == 'h'
   end
 
   def stay?

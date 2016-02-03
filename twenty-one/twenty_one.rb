@@ -1,4 +1,4 @@
-require_relative 'clquestion'
+require_relative 'questionable'
 require_relative 'displayable'
 require_relative 'outcome'
 require_relative 'card'
@@ -6,6 +6,7 @@ require_relative 'deck'
 require_relative 'participant'
 
 class TwentyOne
+  include Questionable
   include Displayable
   include Outcome
   
@@ -37,11 +38,6 @@ class TwentyOne
 
   private
 
-  def display_welcome
-    clear
-    prompt "Welcome to Twenty-one!\n\n"
-  end
-
   def deal_cards
     participants.cycle(2) do |participant|
       participant.add_card(deck)
@@ -59,10 +55,10 @@ class TwentyOne
   end
 
   def play_again?
-    CLquestion.ask("Would you like to play again? (y/n)") do |q|
-      q.error_msg = "Sorry, must be y or n."
-      q.options = %w(y n)
-    end == 'y'
+    ask("Would you like to play again? (y/n)",
+      error_msg: "Sorry, must be y or n.",
+      options: %w(y n)
+    ) == 'y'
   end
 
   def reset

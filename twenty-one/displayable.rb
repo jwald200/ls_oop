@@ -15,4 +15,9 @@ module Displayable
     end
     puts
   end
+  
+  def display_welcome
+    clear
+    prompt "Welcome to Twenty-one!\n\n"
+  end
 end

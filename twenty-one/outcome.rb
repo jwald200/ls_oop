@@ -1,18 +1,18 @@
 module Outcome
   def opponent(participant)
-    participants.detect { |opponent| opponent != participant }
+    self.participants.detect { |opponent| opponent != participant }
   end
 
   def detect_buster
-    participants.detect(&:busted?)
+    self.participants.detect(&:busted?)
   end
 
   def detect_winner
-    participants.max_by(&:total)
+    self.participants.max_by(&:total)
   end
 
   def tie?
-    participants.collect(&:total).uniq.one?
+    self.participants.collect(&:total).uniq.one?
   end
 
   def display_outcome
