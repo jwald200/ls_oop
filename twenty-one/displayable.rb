@@ -7,12 +7,6 @@ module Displayable
     system('clear') || system('cls')
   end
 
-  def clear_prior_and_post
-    clear
-    yield
-    clear
-  end
-
   def in_progress_indicator(msg)
     print msg.capitalize + ' '
     4.times do
